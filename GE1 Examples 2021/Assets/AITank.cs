@@ -9,7 +9,7 @@ public class AITank : MonoBehaviour {
     public int numWaypoints = 5;
     public int current = 0;
     List<Vector3> waypoints = new List<Vector3>();
-    public float speed = 10;
+    public float speed = 2;
     public float rotSpeed = 30;
     public Transform player;    
 
@@ -72,19 +72,22 @@ public class AITank : MonoBehaviour {
         // Put code here to move the tank towards the next waypoint
         // When the tank reaches a waypoint you should advance to the next one
         
-        //localise position of gizmo
         
-        //1. translate calculation to origin.
-        Vector3 translatedPoint = waypoint[current] - this.transform.position;
+        //----------------------------- Rotation
+        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(waypoints[current]-transform.position), Time.deltaTime * rotSpeed);
 
-        float angleToGizmo = translatedPoint.y
+        if((this.transform.position-waypoints[current]).magnitude > 0.5){
+            transform.Translate(0, 0,speed * Time.deltaTime);
+        }
+        else{
+            current = (current+1)%numWaypoints;
+        }
         
-
-
-        transform.Translate(0, 0, Input.GetAxis("Vertical") * speed * Time.deltaTime);
-        transform.Rotate(0, Input.GetAxis("Horizontal") * rotSpeed * Time.deltaTime, 0);
-        
-
+        //transform.Translate(0, 0, Input.GetAxis("Vertical") * speed * Time.deltaTime);
+        GameManager.Log("Rotation :"+transform.rotation);
+        GameManager.Log("DISTANCE :"+(this.transform.position-waypoints[current]).magnitude);
+        GameManager.Log("Current :"+current);
+        GameManager.Log("transform.forw :"+transform.forward);
         // Task 4
         // Put code here to check if the player is in front of or behine the tank
         // Task 5
